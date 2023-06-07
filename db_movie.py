@@ -30,6 +30,11 @@ for idx, row in df.iterrows() :
     cursor.execute(sql,val)
 
     m_id = cursor.lastrowid
+    
+    # sql = "select m_id from movie where m_name = %s"
+    # val = (m_name,)
+    # mm_id = cursor.execute(sql,val)
+    # print(mm_id)
 
 
     # 감독 테이블 , 중간테이블
@@ -37,26 +42,32 @@ for idx, row in df.iterrows() :
     for d_name in d_names :
         d_name = d_name.strip()
         if d_name != 'N/A' : 
-            sql = f"SELECT d_id from director where d_name='{d_name}'"
-            cursor.execute(sql)
+            sql = "SELECT d_id from director where d_name = %s"
+            val = (d_name,)
+            cursor.execute(sql,val)
             res = cursor.fetchone()
 
-            if res is None :
+            #감독 아이디가 없는 경우
+            if res is None : 
                 sql = "INSERT INTO director (d_name) values (%s)"
                 val = (d_name,)
                 cursor.execute(sql,val)
 
                 d_id = cursor.lastrowid
 
+
                 sql = f"Select * from mdinter where m_id = {m_id} and d_id ={d_id}"
                 cursor.execute(sql)
+
                 if cursor.fetchone() is None :
                     sql = "INSERT INTO mdinter (m_id,d_id) values (%s,%s)"
                     val =(m_id,d_id)
                     cursor.execute(sql,val)
                 else :
-                    print(m_name , d_name , m_id , d_id)
+                   print(m_name , d_name , m_id , d_id)
+            # 감독 아이디가 이미 존재하는 경우
             else :
+               # print(f"이미 존재하는 감독 : {d_name} , {res['d_id']}")
                 sql = f"Select * from mdinter where m_id = {m_id} and d_id ={res['d_id']}"
                 cursor.execute(sql)
                 if cursor.fetchone() is None :
@@ -79,8 +90,8 @@ for idx, row in df.iterrows() :
         cursor.execute(sql,val)
 
     if (idx+1) % 10000 == 0 :
-        print(f"-----------{idx} movies updated--------------")
+        print(f"-----------{idx+1} movies updated--------------")
 
-conn.commit()
+# conn.commit()
 
 conn.close()

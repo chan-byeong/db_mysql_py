@@ -48,16 +48,26 @@ for idx, row in df.iterrows() :
 
                 d_id = cursor.lastrowid
 
-                sql = "INSERT INTO mdinter (m_id,d_id) values (%s,%s)"
-                val =(m_id,d_id)
-                cursor.execute(sql,val)
+                sql = f"Select * from mdinter where m_id = {m_id} and d_id ={d_id}"
+                cursor.execute(sql)
+                if cursor.fetchone() is None :
+                    sql = "INSERT INTO mdinter (m_id,d_id) values (%s,%s)"
+                    val =(m_id,d_id)
+                    cursor.execute(sql,val)
+                else :
+                    print(m_name , d_name , m_id , d_id)
             else :
-                sql = "INSERT INTO mdinter (m_id,d_id) values (%s,%s)"
-                val = (m_id,res['d_id'])
-                cursor.execute(sql,val)
+                sql = f"Select * from mdinter where m_id = {m_id} and d_id ={res['d_id']}"
+                cursor.execute(sql)
+                if cursor.fetchone() is None :
+                    sql = "INSERT INTO mdinter (m_id,d_id) values (%s,%s)"
+                    val = (m_id,res['d_id'])
+                    cursor.execute(sql,val)
+                else :
+                    print(m_name , d_name , m_id , d_id)
             
             
-    
+    #mdinter 중복 키 들어올 시 예외처리
 
     #장르 테이블
     g_names = row['장르'].split(',')
@@ -68,7 +78,7 @@ for idx, row in df.iterrows() :
         val = (m_id,g_name)
         cursor.execute(sql,val)
 
-    if(idx % 100 == 0 ) :
+    if (idx+1) % 10000 == 0 :
         print(f"-----------{idx} movies updated--------------")
 
 conn.commit()

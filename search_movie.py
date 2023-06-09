@@ -1,44 +1,11 @@
-# 검색 조건
-# 영화 제목 , 제목(영문) , 제작연도 , 유형 , 제작 국가 , 제작회사 , 상태
-# 감독 , 장르 
-
 import pymysql
 
-def search_movies(title=None, year=None, country=None, type=None, company = None, state=None , genre=None, director=None):
-  #connect
-  conn = pymysql.connect(host='localhost', user='root', password='livinla98',db='movie_info', charset='utf8')
-  cursor = conn.cursor(pymysql.cursors.DictCursor)
+from table_insert import xls_to_table , create_idx ,search_movies
+from create_table import create_table
 
-  sql="""
-    SELECT m.m_name , m.m_year , d.d_name , g.g_name , m.m_country , m.type ,m.state , m.company
-    FROM movie m, director d , genre g , mdinter md
-    WHERE m.m_id = md.m_id and d.d_id = md.d_id and m.m_id = g.m_id
-  """
-
-  if title : 
-    sql += f"AND m.m_name LIKE '%{title}%'"
-  if year :
-    sql += f"AND m.m_year = {year}"
-  if country :
-    sql += f"AND m.m_country = '{country}'"
-  if genre :
-    sql += f"AND g.g_name = '{genre}'"
-  if director :
-    sql += f"AND d.d_name = '{director}'"
-
-  cursor.execute(sql)
-  res = cursor.fetchall()
-
-  print("영화제목 | 감독 | 제작연도 | 장르 | 유형 | 상태 | 회사 | 국가")
-  
-  for movie in res :
-
-    print()
-    print(f"{movie['m_name']} | {movie['d_name']} | {movie['m_year']} | {movie['g_name']} | {movie['state']} | {movie['company']} | {movie['m_country']}")
-    print()
-
-  conn.close()
-
+# create_table()
+# xls_to_table()
+# create_idx()
 
 # user
 while True :
@@ -55,7 +22,6 @@ while True :
   print("*입력을 생략하려면 아무것도 입력하지 않은 상태에서 Enter를 누르세요.")
   print()
   
-
   title = input("영화제목을 입력하세요 : ")
   director = input("영화감독을 입력하세요 : ")
   genre = input("영화 장르를 입력하세요 : ")

@@ -4,3 +4,6 @@
 pandas , pymysql
 
 ### Process
+엑셀 데이터 -> python : pandas
+pyton ->  mysql : pymysql
+
